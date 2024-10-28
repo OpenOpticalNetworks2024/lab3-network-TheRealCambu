@@ -77,12 +77,15 @@ class Node(object):
     def successive(self):
         return self._successive
 
-    @successive.setter
-    def successive(self, key: str, line_obj):
+    # @successive.setter
+    # def successive(self, key: str, line_obj):
+    #     """Sets a connection in successive to a Line object"""
+    #     self._successive[key] = line_obj
+    def add_successive(self, key: str, line_obj):
         """Sets a connection in successive to a Line object"""
         self._successive[key] = line_obj
 
-    def propagate(self, signal_info):
+    def propagate(self, signal_info: Signal_information):
         # Modify the path attribute of the Signal Information
         # object by adding the current node's label
         signal_info.update_path(self._label)
@@ -92,7 +95,6 @@ class Node(object):
             next_node_label = signal_info.path[0]
             if next_node_label in self._successive:
                 self._successive[next_node_label].propagate(signal_info)
-
 
 
 class Line(object):
