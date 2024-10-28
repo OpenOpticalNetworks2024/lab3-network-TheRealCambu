@@ -1,9 +1,15 @@
 import json
 
 
+# This constructor initializes the signal power to a given value, the
+#  noise power and the latency to zero and the path as a given list of letters
+#  that represents the labels of the nodes the signal has to travel through.
 class Signal_information(object):
-    def __init__(self):
-        pass
+    def __init__(self, signal_power: float, path: list[str]):
+        self._signal_power = signal_power
+        self._noise_power = 0.0
+        self._latency = 0.0
+        self._path = path
 
     @property
     def signal_power(self):
