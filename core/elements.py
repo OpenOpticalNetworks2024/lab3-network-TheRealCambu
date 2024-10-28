@@ -1,10 +1,10 @@
 import json
 
 
-# This constructor initializes the signal power to a given value, the
-#  noise power and the latency to zero and the path as a given list of letters
-#  that represents the labels of the nodes the signal has to travel through.
 class Signal_information(object):
+    # This constructor initializes the signal power to a given value, the noise
+    # power and the latency to zero and the path as a given list of letters
+    # that represent the labels of the nodes the signal has to travel through.
     def __init__(self, signal_power: float, path: list[str]):
         self._signal_power = signal_power
         self._noise_power = 0.0
@@ -13,10 +13,10 @@ class Signal_information(object):
 
     @property
     def signal_power(self):
-        pass
+        return self._signal_power
 
-    def update_signal_power(self):
-        pass
+    def update_signal_power(self, increment):
+        self._signal_power += increment
 
     @property
     def noise_power(self):
