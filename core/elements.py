@@ -6,10 +6,10 @@ class Signal_information(object):
     # power and the latency to zero and the path as a given list of letters
     # that represents the labels of the nodes the signal has to travel through.
     def __init__(self, signal_power: float, path: list[str]):
-        self._signal_power = signal_power  # float
-        self._noise_power = 0.0  # float
-        self._latency = 0.0  # float
-        self._path = path  # list[string]
+        self._signal_power = signal_power  # Signal power. Type: float
+        self._noise_power = 0.0  # Noise power. Type: float
+        self._latency = 0.0  # Latency. Type: float
+        self._path = path  # List of node labels the signal must traverse. Type: list[string]
 
     @property
     def signal_power(self):
@@ -49,20 +49,18 @@ class Signal_information(object):
         self._path = value
 
     def update_path(self, node: str):
-        # # Remove the current node to reflect the progression in the path
-        # if self._path:
-        #     self._path.pop(0)  # Move to the next node
-        self._path.append(node)  # Append the node label to the path history
+        # Append the node label to the path history
+        self._path.append(node)
 
 
 class Node(object):
     # This constructor initializes these values from a Python dictionary input.
     # The successive attribute must be initialized in an empty dictionary.
     def __init__(self, input_dict: dict):
-        self._label = input_dict['label']  # String
-        self._position = input_dict['position']  # Tuple of floats
-        self._connected_nodes = input_dict['connected_nodes']  # List of strings
-        self._successive = {}  # Dictionary to hold Line objects for each connected node
+        self._label = input_dict['label']  # Unique identifier for the line. Type: list[string]
+        self._position = input_dict['position']  # Tuple of position. Type: list[string]
+        self._connected_nodes = input_dict['connected_nodes']  # List of connected node labels. Type: list[string]
+        self._successive = {}  # Dictionary to hold Line objects for each connected node. Type: dict
 
     @property
     def label(self):
@@ -86,14 +84,14 @@ class Node(object):
         self._successive = connections
 
     def propagate(self, signal_info: Signal_information):
-        # Modify the path attribute of the Signal Information
-        # object by adding the current node's label
+        # Update the signal path and mark this node as visited
         signal_info.update_path(self._label)
 
         # Call the successive element propagate method, according to the specified path
         if signal_info.path:
             next_node_label = signal_info.path[0]
             if next_node_label in self._successive:
+                # Call propagate on the connecting line object
                 self._successive[next_node_label].propagate(signal_info)
             else:
                 print(f"Node {self._label}: No successive node found for {next_node_label}.")
@@ -101,9 +99,9 @@ class Node(object):
 
 class Line(object):
     def __init__(self, label: str, length: float):
-        self._label = label  # string
-        self._length = length  # float
-        self._successive = {}
+        self._label = label  # Unique identifier for the line. Type: string
+        self._length = length  # Length of the line. Type: float
+        self._successive = {}  # Successive node after the line. Type: dict
 
     @property
     def label(self):
@@ -121,26 +119,38 @@ class Line(object):
     def successive(self, connections: dict):
         self._successive = connections
 
-    def latency_generation(self, signal: Signal_information) -> float:
-        # Speed of light in fiber (2/3 of the speed of light in vacuum)
-        speed_of_light_fiber = (2 / 3) * 3 * 10 ** 8
+    def latency_generation(self) -> float:
+        # Compute the latency as the fiber length divded by the speed of light in fiber
+        return self._length / (2 * 10 ** 8)
 
-        # Compute the latency (s) = length (m) / c (m/s)
-        latency = self._length / speed_of_light_fiber
+    def noise_generation(self, signal_power: float) -> float:
+        # Compute the noise
+        return 1 * 10 ** -9 * signal.signal_power * self._length
 
-        # Update the signal latency and return the new latency value
-        signal.update_latency(latency)
-        return signal.latency
+    def propagate(self, signal_info: Signal_information):
+        # Update the signal noise power
+        noise = self.noise_generation(signal_info.signal_power)
+        signal_info.update_noise_power(noise)
 
-    def noise_generation(self):
-        pass
+        # Update the signal latency
+        latency = self.latency_generation()
+        signal_info.update_latency(latency)
 
-    def propagate(self):
-        pass
+        # Update the signal path and mark this node as visited
+        signal_info.update_path(self._label)
+
+        # Call the successive element propagate method, according to the specified path
+        if signal_info.path:
+            next_node_label = signal_info.path[0]
+            if next_node_label in self._successive:
+                self._successive[next_node_label].propagate(signal_info)
+            else:
+                print(f"Node {self._label}: No successive node found for {next_node_label}.")
 
 
 class Network(object):
-    def __init__(self):
+    def __init__(self, label: string, node: Node, line: Line):
+        # self._nodes =
         pass
 
     @property
