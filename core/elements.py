@@ -58,7 +58,7 @@ class Node(object):
     # The successive attribute must be initialized in an empty dictionary.
     def __init__(self, input_dict: dict):
         self._label = input_dict['label']  # Unique identifier for the line. Type: list[string]
-        self._position = input_dict['position']  # Tuple of position. Type: list[string]
+        self._position = input_dict['position']  # Tuple of position. Type: tuple(float, float)
         self._connected_nodes = input_dict['connected_nodes']  # List of connected node labels. Type: list[string]
         self._successive = {}  # Dictionary to hold Line objects for each connected node. Type: dict
 
@@ -150,8 +150,9 @@ class Line(object):
 
 class Network(object):
     def __init__(self, label: string, node: Node, line: Line):
-        # self._nodes =
-        pass
+        with open("resources/nodes.json") as file:
+            data = json.load(file)
+
 
     @property
     def nodes(self):
