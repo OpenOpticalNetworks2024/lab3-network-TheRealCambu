@@ -1,5 +1,7 @@
 import json
-
+import matplotlib.pyplot as plt
+import numpy as np
+from itertools import permutations
 
 class Signal_information(object):
     # This constructor initializes the signal power to a given value, the noise
@@ -149,18 +151,16 @@ class Line(object):
 
 
 class Network(object):
-    def __init__(self, label: string, node: Node, line: Line):
-        with open("resources/nodes.json") as file:
-            data = json.load(file)
-
+    def __init__(self, json_file: str):
+        with open(json_file)
 
     @property
     def nodes(self):
-        pass
+        return self._nodes
 
     @property
     def lines(self):
-        pass
+        return self._lines
 
     def draw(self):
         pass
