@@ -152,7 +152,19 @@ class Line(object):
 
 class Network(object):
     def __init__(self, json_file: str):
-        with open(json_file)
+        with open(json_file) as file:
+            data = json.load(file)
+
+        self._nodes = {}
+        self._lines = {}
+
+        for label, attributes in data.items():
+            node = Node({
+                'label': label,
+                'connected_nodes': attributes['connected_nodes'],
+                'position': attributes['position']
+            })
+            self._nodes[label] = node
 
     @property
     def nodes(self):
