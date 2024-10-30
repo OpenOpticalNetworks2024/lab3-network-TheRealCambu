@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from itertools import permutations
 
+
 class Signal_information(object):
     # This constructor initializes the signal power to a given value, the noise
     # power and the latency to zero and the path as a given list of letters
@@ -165,6 +166,13 @@ class Network(object):
                 'position': attributes['position']
             })
             self._nodes[label] = node
+
+        for node, info in self._nodes.items:
+            for connected_node in info['connected_nodes']:
+                line_label_forw = f"{node}{connected_node}"
+                line_label_backw = f"{connected_node}{node}"
+                length = np.linalg.norm(info['position'], self._nodes[connected_node].position)
+
 
     @property
     def nodes(self):
