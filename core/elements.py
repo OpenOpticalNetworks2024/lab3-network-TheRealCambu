@@ -172,6 +172,10 @@ class Network(object):
                 line_label_forw = f"{node}{connected_node}"
                 line_label_backw = f"{connected_node}{node}"
                 length = np.linalg.norm(info['position'], self._nodes[connected_node].position)
+                line_forw = Line(line_label_forw, length)
+                line_backw = Line(line_label_backw, length)
+                self._lines[line_label_forw] = line_forw
+                self._lines[line_label_backw] = line_backw
 
 
     @property
