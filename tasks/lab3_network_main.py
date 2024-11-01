@@ -21,16 +21,17 @@ nodes = {}
 for label, attributes in data.items():
     nodes[label] = {
         'connected_nodes': attributes['connected_nodes'],
-        'position': attributes['position']
+        'position': tuple(attributes['position'])
     }
 
 for node, info in nodes.items():
-    print(f"Connections for node {node}:")
-    for connected_node in info['connected_nodes']:
-        if node < connected_node:
-            print(f"    {node}{connected_node}")
+#     print(f"Connections for node {node}:")
+#     for connected_node in info['connected_nodes']:
+#         if node < connected_node:
+#             print(f"    {node}{connected_node}")
 
-# print(f"Node: {node}")
-# print(f"   Connected node: {info['connected_nodes']}")
-# print(f"   Positions: {info['position']}")
+    print(f"Node: {node}")
+    print(f"   Connected node: {info['connected_nodes']}")
+    print(f"   Positions: {info['position']}")
+    print(f"   Positions is of type: {type(info['position'])}")
 
