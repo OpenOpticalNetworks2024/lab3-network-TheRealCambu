@@ -216,7 +216,7 @@ class Network(object):
     def connect(self):
         for label, node in self._nodes.items():
             for connected_node_label in node.connected_nodes:
-
+                self._lines._successive = {}
 
     # propagate signal_information through path specified in it
     # and returns the modified spectral information
