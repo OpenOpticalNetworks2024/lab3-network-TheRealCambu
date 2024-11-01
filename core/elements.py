@@ -128,7 +128,7 @@ class Line(object):
 
     def noise_generation(self, signal_power: float) -> float:
         # Compute the noise
-        return 1 * 10 ** -9 * signal.signal_power * self._length
+        return 1 * 10 ** -9 * signal_power * self._length
 
     def propagate(self, signal_info: Signal_information):
         # Update the signal noise power
@@ -167,16 +167,15 @@ class Network(object):
             })
             self._nodes[label] = node
 
-        for node, info in self._nodes.items:
-            for connected_node in info['connected_nodes']:
-                line_label_forw = f"{node}{connected_node}"
-                line_label_backw = f"{connected_node}{node}"
-                length = np.linalg.norm(info['position'], self._nodes[connected_node].position)
-                line_forw = Line(line_label_forw, length)
-                line_backw = Line(line_label_backw, length)
-                self._lines[line_label_forw] = line_forw
-                self._lines[line_label_backw] = line_backw
-
+        for node_label, node in self._nodes.items():
+            for connected_node_label in node.connected_nodes:
+                if node_label < connected_node_label:
+                    line_label = f"{node}{connected_node_label}"
+                    length = np.linalg.norm(node.position, self._nodes[connected_node_label].position)
+                    line = Line(line_label, length)
+                    self._lines[line_label] = line
+                    # Connect the line to nodes
+                    node.successive[line]
 
     @property
     def nodes(self):
