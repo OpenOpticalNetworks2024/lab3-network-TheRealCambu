@@ -27,8 +27,8 @@ for label, attributes in data.items():
 for node, info in nodes.items():
     print(f"Connections for node {node}:")
     for connected_node in info['connected_nodes']:
-        print(f"    {node}{connected_node}")
-        print(f"    {connected_node}{node}")
+        if node < connected_node:
+            print(f"    {node}{connected_node}")
 
 # print(f"Node: {node}")
 # print(f"   Connected node: {info['connected_nodes']}")

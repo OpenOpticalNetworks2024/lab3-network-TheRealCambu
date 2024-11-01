@@ -92,7 +92,7 @@ class Node(object):
 
         # Call the successive element propagate method, according to the specified path
         if signal_info.path:
-            next_node_label = signal_info.path[0]
+            next_node_label = signal_info.path[1]
             if next_node_label in self._successive:
                 # Call propagate on the connecting line object
                 self._successive[next_node_label].propagate(signal_info)
@@ -156,9 +156,11 @@ class Network(object):
         with open(json_file) as file:
             data = json.load(file)
 
+        # Initialize empty dictionaries
         self._nodes = {}
         self._lines = {}
 
+        # Initialize nodes
         for label, attributes in data.items():
             node = Node({
                 'label': label,
@@ -167,15 +169,29 @@ class Network(object):
             })
             self._nodes[label] = node
 
+        # Initialize lines with forward and backward connections
         for node_label, node in self._nodes.items():
             for connected_node_label in node.connected_nodes:
-                if node_label < connected_node_label:
-                    line_label = f"{node}{connected_node_label}"
-                    length = np.linalg.norm(node.position, self._nodes[connected_node_label].position)
-                    line = Line(line_label, length)
-                    self._lines[line_label] = line
-                    # Connect the line to nodes
-                    node.successive[line]
+                # Forward and backward line labels
+                line_label_forw = f"{node_label}{connected_node_label}"
+                line_label_backw = f"{connected_node_label}{node_label}"
+
+                # Calculate length between the two node positions
+                node_position = np.array(node.position)
+                connected_node_position = np.array(self._nodes[connected_node_label].position)
+                length = np.linalg.norm(node_position - connected_node_position)
+
+                # Create forward and backward line objects
+                line_forw = Line(line_label_forw, length)
+                line_backw = Line(line_label_backw, length)
+
+                # Add lines to the lines dictionary
+                self._lines[line_label_forw] = line_forw
+                self._lines[line_label_backw] = line_backw
+
+                # Connect the lines to nodes in both directions
+                node.successive[line_label_forw] = line_forw
+                self._nodes[connected_node_label].successive[line_label_backw] = line_backw
 
     @property
     def nodes(self):
