@@ -182,7 +182,18 @@ class Network(object):
         return self._lines
 
     def draw(self):
-        pass
+        for node_label, node in self._nodes.items():
+            x, y = node.position
+            plt.plot(x, y, 'bo')
+            plt.text(x, y, node_label, color='red', fontsize=12, ha='right')
+
+        for line in self._lines.values():
+            start_node_label, end_node_label = line.label[0], line.label[1]
+            start_pos, end_pos = self._nodes[start_node_label].position, self._nodes[end_node_label].position
+            plt.plot([start_pos[0], start_pos[1]], [end_pos[0], end_pos[1]], 'g-')
+
+        plt.title("Optical Network")
+        plt.show()
 
     # Find_paths: given two node labels, returns all paths that connect the 2 nodes as a list of node labels.
     # Admissible path only if cross any node at most once
@@ -215,11 +226,13 @@ class Network(object):
                 line = self._lines[line_label]
 
                 # Update the node's successive attribute
-                node.successive[connected_node_label] = line
+                node.successive[line_label] = line
 
                 # Update the line's successive attribute (pointing to the connected node)
-                line.successive[node_label] = self._nodes[connected_node_label]
+                line.successive[connected_node_label] = self._nodes[connected_node_label]
 
     # Propagate signal_information through path specified in it and returns the modified spectral information
     def propagate(self, signal_information):
-        pass
+        start_node_label = signal_information.path.pop(0)
+        self._nodes[start_node_label].propagate(signal_information)
+        return signal_information
