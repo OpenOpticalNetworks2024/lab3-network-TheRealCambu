@@ -7,7 +7,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent / 'core'))
 import json
 import numpy as np
 import pandas as pd
-from elements import Network  # Direct import after adjusting sys.path
+from elements import Network, Signal_information  # Direct import after adjusting sys.path
 
 # Define paths
 ROOT = Path(__file__).resolve().parent.parent
@@ -22,6 +22,15 @@ network = Network(file_input)
 network.connect()
 
 # TODO: 1) Find all the combinations of nodes in two places
+
+# Print all nodes
+for node_label, node in network.nodes.items():
+    print(node)
+
+# Print all lines
+for line_label, line in network.lines.items():
+    print(line)
+
 
 
 

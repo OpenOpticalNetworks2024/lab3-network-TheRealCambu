@@ -1,6 +1,7 @@
 import json
 import matplotlib.pyplot as plt
 import numpy as np
+from parameters import c_fiber
 
 
 class Signal_information(object):
@@ -83,6 +84,12 @@ class Node(object):
         # Sets a connection in successive to a Line object
         self._successive = connections
 
+    def __str__(self):
+        return f"Node(Label: {self._label}, Position: {self._position}, Connected nodes: {self._connected_nodes})"
+
+    def __repr__(self):
+        return self.__str__()
+
     def propagate(self, signal_info: Signal_information):
         # Update the signal path and mark this node as visited
         signal_info.update_path(self._label)
@@ -100,6 +107,12 @@ class Line(object):
         self._label = label  # Unique identifier for the line. Type: string
         self._length = length  # Length of the line. Type: float
         self._successive = {}  # Successive node after the line. Type: dict
+
+    def __str__(self):
+        return f"Line(Label: {self._label}, Length: {self._length})"
+
+    def __repr__(self):
+        return self.__str__()
 
     @property
     def label(self):
@@ -119,7 +132,7 @@ class Line(object):
 
     def latency_generation(self) -> float:
         # latency_generation: Calculate and return latency based on the line length and speed of light in fiber
-        return self._length / 2e8
+        return self._length / c_fiber
 
     def noise_generation(self, signal_power: float) -> float:
         # noise_generation: Calculate and return noise power as a function of signal power and line length
@@ -171,7 +184,7 @@ class Network(object):
                 length = np.linalg.norm(node_position - connected_node_position)
 
                 # Add lines to the lines dictionary (for both directions)
-                self._lines[node_label] = Line(line_label, length)
+                self._lines[line_label] = Line(line_label, length)
 
     @property
     def nodes(self):
@@ -188,8 +201,8 @@ class Network(object):
             plt.text(x, y, node_label, color='red', fontsize=12, ha='right')
 
         for line in self._lines.values():
-            start_node_label, end_node_label = line.label[0], line.label[1]
-            start_pos, end_pos = self._nodes[start_node_label].position, self._nodes[end_node_label].position
+            start_node, end_node = line.label[0], line.label[1]
+            start_pos, end_pos = self._nodes[start_node].position, self._nodes[end_node].position
             plt.plot([start_pos[0], end_pos[0]], [start_pos[1], end_pos[1]], 'g-')
 
         plt.title("Optical Network")
