@@ -56,8 +56,6 @@ class Signal_information(object):
 
 
 class Node(object):
-    # This constructor initializes these values from a Python dictionary input.
-    # The successive attribute must be initialized in an empty dictionary.
     def __init__(self, input_dict: dict):
         self._label = input_dict['label']  # Unique identifier for the line. Type: list[string]
         self._position = tuple(input_dict['position'])  # Tuple of position. Type: tuple(float, float)
@@ -91,7 +89,7 @@ class Node(object):
 
         # Call the successive element propagate method, according to the specified path
         if signal_info.path:
-            next_node_label = signal_info.path[0]
+            next_node_label = signal_info.path.pop(0)
             if next_node_label in self._successive:
                 # Call propagate on the connecting line object
                 self._successive[next_node_label].propagate(signal_info)
@@ -120,7 +118,7 @@ class Line(object):
         self._successive = connections
 
     def latency_generation(self) -> float:
-        # Compute the latency as the fiber length divded by the speed of light in fiber
+        # Compute the latency as the fiber length divided by the speed of light in fiber
         return self._length / 2e8
 
     def noise_generation(self, signal_power: float) -> float:
@@ -138,7 +136,7 @@ class Line(object):
 
         # Call the successive element propagate method, according to the specified path
         if signal_info.path:
-            next_node_label = signal_info.path[0]
+            next_node_label = signal_info.path.pop(0)
             if next_node_label in self._successive:
                 self._successive[next_node_label].propagate(signal_info)
 
@@ -148,11 +146,9 @@ class Network(object):
         with open(json_file) as file:
             data = json.load(file)
 
-        # Initialize the dictionaries such that they contain one key
-        # for each network element that coincide with the element label
-        network_keys = [label for label, _ in data.items()]
-        self._nodes = dict.fromkeys(network_keys)
-        self._lines = dict.fromkeys(network_keys)
+        # Initialize the dictionaries as empty
+        self._nodes = {}
+        self._lines = {}
 
         # Initialize nodes
         for label, attributes in data.items():
@@ -188,8 +184,8 @@ class Network(object):
     def draw(self):
         pass
 
-    # find_paths: given two node labels, returns all paths that connect the 2 nodes
-    # as a list of node labels. Admissible path only if cross any node at most once
+    # Find_paths: given two node labels, returns all paths that connect the 2 nodes as a list of node labels.
+    # Admissible path only if cross any node at most once
     def find_paths(self, label1: str, label2: str):
         all_paths = []
         visited = set()
@@ -209,20 +205,21 @@ class Network(object):
         dfs(label1, label2, [label1])
         return all_paths
 
-    # connect function set the successive attributes of all NEs as dicts
-    # each node must have dict of lines and viceversa
+    # Connect function set the successive attributes of all NEs as dicts each node must have dict of lines and viceversa
     def connect(self):
         # Fill the "_successive" dictionary of each node with all the information about the lines
         for node_label, node in self._nodes.items():
             for connected_node_label in node.connected_nodes:
+                # Get the line that connects this node to the connected node
                 line_label = f"{node_label}{connected_node_label}"
                 line = self._lines[line_label]
+
+                # Update the node's successive attribute
                 node.successive[connected_node_label] = line
+
+                # Update the line's successive attribute (pointing to the connected node)
                 line.successive[node_label] = self._nodes[connected_node_label]
 
-    # propagate signal_information through path specified in it
-    # and returns the modified spectral information
+    # Propagate signal_information through path specified in it and returns the modified spectral information
     def propagate(self, signal_information):
-        current_node_label = signal_information.path[0]
-        if current_node_label in self._nodes:
-            self._nodes[current_node_label].propagate(signal_information)
+        pass
