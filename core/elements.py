@@ -168,7 +168,6 @@ class Network(object):
             for connected_node_label in node.connected_nodes:
                 # Produce the line label
                 line_label = f"{node_label}{connected_node_label}"
-                # reverse_line_label = f"{connected_node_label}{node_label}"
 
                 # Compute the length of the line
                 node_position = np.array(node.position)
@@ -177,7 +176,6 @@ class Network(object):
 
                 # Add lines to the lines dictionary (for both directions)
                 self._lines[node_label] = Line(line_label, length)
-                # self._lines[node_label] = Line(reverse_line_label, length)
 
     @property
     def nodes(self):
@@ -214,9 +212,13 @@ class Network(object):
     # connect function set the successive attributes of all NEs as dicts
     # each node must have dict of lines and viceversa
     def connect(self):
-        for label, node in self._nodes.items():
+        # Fill the "_successive" dictionary of each node with all the information about the lines
+        for node_label, node in self._nodes.items():
             for connected_node_label in node.connected_nodes:
-                self._lines._successive = {}
+                line_label = f"{node_label}{connected_node_label}"
+                line = self._lines[line_label]
+                node.successive[connected_node_label] = line
+                line.successive[node_label] = self._nodes[connected_node_label]
 
     # propagate signal_information through path specified in it
     # and returns the modified spectral information

@@ -24,14 +24,14 @@ for label, attributes in data.items():
         'position': tuple(attributes['position'])
     }
 
-for node, info in nodes.items():
+for label, node in nodes.items():
 #     print(f"Connections for node {node}:")
 #     for connected_node in info['connected_nodes']:
 #         if node < connected_node:
 #             print(f"    {node}{connected_node}")
 
-    print(f"Node: {node}")
-    print(f"   Connected node: {info['connected_nodes']}")
-    print(f"   Positions: {info['position']}")
-    print(f"   Positions is of type: {type(info['position'])}")
+    print(f"Node: {label}")
+    print(f"   Connected node: {node['connected_nodes']}")
+    print(f"   Positions: {node['position']}")
+    print(f"   Positions is of type: {type(node['position'])}")
 
