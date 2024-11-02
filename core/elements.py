@@ -4,7 +4,7 @@ import numpy as np
 from parameters import c_fiber
 
 
-class Signal_information(object):
+class SignalInformation(object):
     # This constructor initializes the signal power to a given value, the noise
     # power and the latency to zero and the path as a given list of letters
     # that represents the labels of the nodes the signal has to travel through.
@@ -90,7 +90,7 @@ class Node(object):
         # Sets a connection in successive to a Line object
         self._successive = connections
 
-    def propagate(self, signal_info: Signal_information):
+    def propagate(self, signal_info: SignalInformation):
         # Update the signal path and mark this node as visited
         signal_info.update_path(self._label)
 
@@ -138,7 +138,7 @@ class Line(object):
         # noise_generation: Calculate and return noise power as a function of signal power and line length
         return 1e-9 * signal_power * self._length
 
-    def propagate(self, signal_info: Signal_information):
+    def propagate(self, signal_info: SignalInformation):
         # Update the signal noise power
         noise = self.noise_generation(signal_info.signal_power)
         signal_info.update_noise_power(noise)
@@ -256,7 +256,7 @@ class Network(object):
             line.successive = {line.label[1]: self._nodes[line.label[1]]}
 
     # Propagate signal_information through path specified in it and returns the modified spectral information
-    def propagate(self, signal_info: Signal_information):
+    def propagate(self, signal_info: SignalInformation):
         if not signal_info.path:
             raise ValueError("Signal information path is empty; cannot propagate.")
 
