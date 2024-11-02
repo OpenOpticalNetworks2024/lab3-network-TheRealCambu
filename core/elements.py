@@ -63,6 +63,12 @@ class Node(object):
         self._connected_nodes = input_dict['connected_nodes']  # List of connected node labels. Type: list[string]
         self._successive = {}  # Dictionary to hold Line objects for each connected node. Type: dict
 
+    def __str__(self):
+        return f"Node(Label: {self._label}, Position: {self._position}, Connected nodes: {self._connected_nodes})"
+
+    def __repr__(self):
+        return self.__str__()
+
     @property
     def label(self):
         return self._label
@@ -83,12 +89,6 @@ class Node(object):
     def successive(self, connections: dict):
         # Sets a connection in successive to a Line object
         self._successive = connections
-
-    def __str__(self):
-        return f"Node(Label: {self._label}, Position: {self._position}, Connected nodes: {self._connected_nodes})"
-
-    def __repr__(self):
-        return self.__str__()
 
     def propagate(self, signal_info: Signal_information):
         # Update the signal path and mark this node as visited
@@ -230,22 +230,33 @@ class Network(object):
         return all_paths
 
     # Connect function set the successive attributes of all NEs as dicts each node must have dict of lines and viceversa
+    # def connect(self):
+    #     # Fill the "_successive" dictionary of each node with all the information about the lines
+    #     for node_label, node in self._nodes.items():
+    #         for connected_node_label in node.connected_nodes:
+    #             # Get the line that connects this node to the connected node
+    #             line_label = f"{node_label}{connected_node_label}"
+    #             line = self._lines.get(line_label)
+    #             if line:
+    #                 # Update the node's successive attribute
+    #                 node.successive[line_label] = line
+    #
+    #                 # Update the line's successive attribute (pointing to the connected node)
+    #                 line.successive[connected_node_label] = self._nodes[connected_node_label]
     def connect(self):
-        # Fill the "_successive" dictionary of each node with all the information about the lines
         for node_label, node in self._nodes.items():
+            successive_lines = {}
             for connected_node_label in node.connected_nodes:
-                # Get the line that connects this node to the connected node
                 line_label = f"{node_label}{connected_node_label}"
-                line = self._lines.get(line_label)
-                if line:
-                    # Update the node's successive attribute
-                    node.successive[line_label] = line
+                successive_lines[connected_node_label] = self._lines[line_label]
+            node.successive = successive_lines
 
-                    # Update the line's successive attribute (pointing to the connected node)
-                    line.successive[connected_node_label] = self._nodes[connected_node_label]
+        for line_label, line in self._lines.items():
+            line.successive = {line.label[1]: self._nodes[line.label[1]]}
 
     # Propagate signal_information through path specified in it and returns the modified spectral information
-    def propagate(self, signal_information):
-        start_node_label = signal_information.path.pop(0)
-        self._nodes[start_node_label].propagate(signal_information)
-        return signal_information
+    def propagate(self, signal_info: Signal_information):
+        start_node_label = signal_info.path.pop(0)
+        if start_node_label in self._nodes:
+            self._nodes[start_node_label].propagate(signal_info)
+        return signal_info
