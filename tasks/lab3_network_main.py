@@ -1,19 +1,28 @@
+import sys
+from pathlib import Path
+
+# Add the path to the core directory (two levels up from tasks)
+sys.path.append(str(Path(__file__).resolve().parent.parent / 'core'))
+
 import json
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from core.elements import Node, Network
+from elements import Network  # Direct import after adjusting sys.path
 
 # Define paths
-ROOT = Path(__file__).parent
+ROOT = Path(__file__).resolve().parent.parent
 INPUT_FOLDER = ROOT / 'resources'
-file_input = INPUT_FOLDER / 'nodes.json'
+file_input = INPUT_FOLDER / 'nodes.json'  # Full path to the JSON file
 
-# TODO: 1) Find all the combinations of node in two places
+# TODO: 2) Define a Pandas dataframe with the following columns: path, total accumulated latency, total accumulated noise
+#  and the SNR obtained with the propagation through the paths of spectral information with a signal power of 1 mW
 
-# TODO: 2) Define a Pandas dataframe with the following columns: path, tot accumulated latency, tot accumulated noise
-#  and the SNR obtained with the propagation through the paths of a spectral information with a signal power of 1 mW
+network = Network(file_input)
 
-network = Network(INPUT_FOLDER)
+network.connect()
+
+# TODO: 1) Find all the combinations of nodes in two places
+
+
 
 

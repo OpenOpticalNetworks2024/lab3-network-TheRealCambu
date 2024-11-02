@@ -223,13 +223,13 @@ class Network(object):
             for connected_node_label in node.connected_nodes:
                 # Get the line that connects this node to the connected node
                 line_label = f"{node_label}{connected_node_label}"
-                line = self._lines[line_label]
+                line = self._lines.get(line_label)
+                if line:
+                    # Update the node's successive attribute
+                    node.successive[line_label] = line
 
-                # Update the node's successive attribute
-                node.successive[line_label] = line
-
-                # Update the line's successive attribute (pointing to the connected node)
-                line.successive[connected_node_label] = self._nodes[connected_node_label]
+                    # Update the line's successive attribute (pointing to the connected node)
+                    line.successive[connected_node_label] = self._nodes[connected_node_label]
 
     # Propagate signal_information through path specified in it and returns the modified spectral information
     def propagate(self, signal_information):
