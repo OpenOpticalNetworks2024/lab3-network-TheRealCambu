@@ -1,37 +1,19 @@
 import json
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
+from core.elements import Node, Network
 
-# Exercise Lab3: Network
-
-ROOT = Path(__file__).parent.parent
+# Define paths
+ROOT = Path(__file__).parent
 INPUT_FOLDER = ROOT / 'resources'
 file_input = INPUT_FOLDER / 'nodes.json'
 
-# Open the JSON file, read it and store the data
-with open(file_input) as file:
-    data = json.load(file)
+# TODO: 1) Find all the combinations of node in two places
 
-# Initialize and empty dictionary
-nodes = {}
+# TODO: 2) Define a Pandas dataframe with the following columns: path, tot accumulated latency, tot accumulated noise
+#  and the SNR obtained with the propagation through the paths of a spectral information with a signal power of 1 mW
 
-# Fill the dictionary with the data of the JSON
-for label, attributes in data.items():
-    nodes[label] = {
-        'connected_nodes': attributes['connected_nodes'],
-        'position': tuple(attributes['position'])
-    }
+network = Network(INPUT_FOLDER)
 
-for label, node in nodes.items():
-#     print(f"Connections for node {node}:")
-#     for connected_node in info['connected_nodes']:
-#         if node < connected_node:
-#             print(f"    {node}{connected_node}")
-
-    print(f"Node: {label}")
-    print(f"   Connected node: {node['connected_nodes']}")
-    print(f"   Positions: {node['position']}")
-    print(f"   Positions is of type: {type(node['position'])}")
 

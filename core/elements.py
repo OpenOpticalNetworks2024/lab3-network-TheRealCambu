@@ -118,11 +118,11 @@ class Line(object):
         self._successive = connections
 
     def latency_generation(self) -> float:
-        # Compute the latency as the fiber length divided by the speed of light in fiber
+        # latency_generation: Calculate and return latency based on the line length and speed of light in fiber
         return self._length / 2e8
 
     def noise_generation(self, signal_power: float) -> float:
-        # Compute the noise
+        # noise_generation: Calculate and return noise power as a function of signal power and line length
         return 1e-9 * signal_power * self._length
 
     def propagate(self, signal_info: Signal_information):
@@ -190,17 +190,17 @@ class Network(object):
         for line in self._lines.values():
             start_node_label, end_node_label = line.label[0], line.label[1]
             start_pos, end_pos = self._nodes[start_node_label].position, self._nodes[end_node_label].position
-            plt.plot([start_pos[0], start_pos[1]], [end_pos[0], end_pos[1]], 'g-')
+            plt.plot([start_pos[0], end_pos[0]], [start_pos[1], end_pos[1]], 'g-')
 
         plt.title("Optical Network")
         plt.show()
 
-    # Find_paths: given two node labels, returns all paths that connect the 2 nodes as a list of node labels.
-    # Admissible path only if cross any node at most once
+    # find_paths: Finds all admissible paths between two nodes, visiting each node only once.
     def find_paths(self, label1: str, label2: str):
         all_paths = []
         visited = set()
 
+        # dfs: Recursive function to explore each path from current_node to target_node.
         def dfs(current_node, target_node, path):
             if current_node == target_node:
                 all_paths.append(path.copy())
