@@ -195,17 +195,30 @@ class Network(object):
         return self._lines
 
     def draw(self):
-        for node_label, node in self._nodes.items():
-            x, y = node.position
-            plt.plot(x, y, 'bo')
-            plt.text(x, y, node_label, color='red', fontsize=12, ha='right')
+        plt.figure(figsize=(10, 8))  # Increase the figure size
 
+        # Plot nodes
+        for node_label, node in self._nodes.items():
+            # Offset y position to avoid overlap with the bullet
+            plt.text(node.position[0], node.position[1] + 25000, node_label, fontsize=20, ha='center')
+            plt.plot(node.position[0], node.position[1], 'bo', markersize=10)
+
+        # Plot lines
         for line in self._lines.values():
             start_node, end_node = line.label[0], line.label[1]
-            start_pos, end_pos = self._nodes[start_node].position, self._nodes[end_node].position
-            plt.plot([start_pos[0], end_pos[0]], [start_pos[1], end_pos[1]], 'g-')
+            plt.plot([self._nodes[start_node].position[0], self._nodes[end_node].position[0]],
+                     [self._nodes[start_node].position[1], self._nodes[end_node].position[1]], 'g-')
 
-        plt.title("Optical Network")
+        plt.title("Optical Network", fontsize=25)
+        plt.xlabel("Position X (meters)", fontsize=18)
+        plt.ylabel("Position Y (meters)", fontsize=18)
+
+        # Set limits with a margin for the labels
+        plt.ylim(min(node.position[1] for node in self._nodes.values()) - 50000,
+                 max(node.position[1] for node in self._nodes.values()) + 60000)
+
+        plt.tight_layout()
+        plt.grid(True)
         plt.show()
 
     # find_paths: Finds all admissible paths between two nodes, visiting each node only once.
@@ -229,21 +242,8 @@ class Network(object):
         dfs(label1, label2, [label1])
         return all_paths
 
-    # Connect function set the successive attributes of all NEs as dicts each node must have dict of lines and viceversa
-    # def connect(self):
-    #     # Fill the "_successive" dictionary of each node with all the information about the lines
-    #     for node_label, node in self._nodes.items():
-    #         for connected_node_label in node.connected_nodes:
-    #             # Get the line that connects this node to the connected node
-    #             line_label = f"{node_label}{connected_node_label}"
-    #             line = self._lines.get(line_label)
-    #             if line:
-    #                 # Update the node's successive attribute
-    #                 node.successive[line_label] = line
-    #
-    #                 # Update the line's successive attribute (pointing to the connected node)
-    #                 line.successive[connected_node_label] = self._nodes[connected_node_label]
     def connect(self):
+        # Set the successive attributes for each node
         for node_label, node in self._nodes.items():
             successive_lines = {}
             for connected_node_label in node.connected_nodes:
@@ -251,12 +251,19 @@ class Network(object):
                 successive_lines[connected_node_label] = self._lines[line_label]
             node.successive = successive_lines
 
+        # Set the successive attribute for each line
         for line_label, line in self._lines.items():
             line.successive = {line.label[1]: self._nodes[line.label[1]]}
 
     # Propagate signal_information through path specified in it and returns the modified spectral information
     def propagate(self, signal_info: Signal_information):
+        if not signal_info.path:
+            raise ValueError("Signal information path is empty; cannot propagate.")
+
         start_node_label = signal_info.path.pop(0)
         if start_node_label in self._nodes:
             self._nodes[start_node_label].propagate(signal_info)
+        else:
+            raise KeyError(f"Node {start_node_label} not found in nodes.")
+
         return signal_info

@@ -4,7 +4,7 @@ import pandas as pd
 
 # Add the path to the core directory (two levels up from tasks)
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'core'))
-from elements import Network, Signal_information
+from elements import Network
 from science_utils import calculate_snr
 
 # Define paths
@@ -20,6 +20,7 @@ network.connect()
 # Initialize results list to store paths and their metrics
 results = []
 
+# Iterate through each line in the network to find paths between node pairs
 for line in network.lines.values():
     start_node, end_node = line.label[0], line.label[1]
     possible_paths = network.find_paths(start_node, end_node)
@@ -45,12 +46,16 @@ for line in network.lines.values():
         results.append({
             'Node couple': node_couple,
             'Path': path_str,
-            'Accumulated latency': acc_latency,
-            'Accumulated noise': acc_noise,
+            'Accumulated latency (s)': acc_latency,
+            'Accumulated noise (W)': acc_noise,
             'SNR (dB)': snr_db
         })
 
 # Create DataFrame
 df = pd.DataFrame(results)
 
+# Display the DataFrame
 print(df)
+
+# Draw the network
+network.draw()
