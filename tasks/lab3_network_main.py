@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 import pandas as pd
+from itertools import permutations
 
 # Add the path to the core directory (two levels up from tasks)
 sys.path.append(str(Path(__file__).resolve().parent.parent / 'core'))
@@ -20,15 +21,15 @@ network.connect()
 # Initialize results list to store paths and their metrics
 results = []
 
+# Find all the possible combinations of nodes in the network
+node_couples = permutations(network.nodes.keys(), 2)
+
 # Iterate through each line in the network to find paths between node pairs
-for line in network.lines.values():
-    start_node, end_node = line.label[0], line.label[1]
+for node_couple in node_couples:
+    start_node, end_node = node_couple[0], node_couple[1]
     possible_paths = network.find_paths(start_node, end_node)
 
     for path in possible_paths:
-        # Path label
-        node_couple = f"{start_node}-{end_node}"
-
         # Generate a string containing all the nodes traversed by the signal
         path_str = "->".join(path)
 
@@ -44,7 +45,7 @@ for line in network.lines.values():
 
         # Append the result
         results.append({
-            'Node couple': node_couple,
+            'Node couple': f"{start_node}-{end_node}",
             'Path': path_str,
             'Accumulated latency (s)': acc_latency,
             'Accumulated noise (W)': acc_noise,
