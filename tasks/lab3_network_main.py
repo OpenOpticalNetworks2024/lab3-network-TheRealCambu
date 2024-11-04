@@ -55,6 +55,9 @@ for node_couple in node_couples:
 # Create DataFrame
 df = pd.DataFrame(results)
 
+# Save the dataframe as a .csv file
+df.to_csv("weighted_paths.csv")
+
 # Display the DataFrame
 print(df)
 
