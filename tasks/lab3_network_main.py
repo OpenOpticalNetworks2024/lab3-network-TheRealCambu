@@ -56,10 +56,10 @@ for node_couple in node_couples:
 df = pd.DataFrame(results)
 
 # Save the dataframe as a .csv file
-df.to_csv("weighted_paths.csv")
+df.to_csv("weighted_paths.csv", index=False)
 
 # Display the DataFrame
-print(df)
+print(df.head())
 
 # Draw the network
-network.draw()
+# network.draw()
