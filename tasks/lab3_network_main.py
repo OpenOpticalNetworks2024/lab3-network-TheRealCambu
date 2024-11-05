@@ -62,4 +62,4 @@ df.to_csv("weighted_paths.csv", index=False)
 print(df.head())
 
 # Draw the network
-# network.draw()
+network.draw()
